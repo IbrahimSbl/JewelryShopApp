@@ -1,0 +1,500 @@
+﻿@page "/shopping"
+@using System.Text.Json;
+@using Microsoft.AspNetCore.Components.Routing;
+@inject IHttpClientFactory ClientFactory
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+<main id="main">
+
+	<!-- ======= Breadcrumbs ======= -->
+	<section id="breadcrumbs" class="breadcrumbs">
+		<div class="container ">
+			
+			<div class="d-flex justify-content-between align-items-center">
+				
+				<h2>Shopping</h2>
+				<ol>
+					<li><a href="/">Home</a></li>
+					<li>Shopping</li>
+				</ol>
+			</div>
+
+		</div>
+	</section><!-- End Breadcrumbs -->
+
+	<!-- ======= Shopping Section ======= -->
+	<div class="mx-2">
+		<div class="row filter-bar">
+			<div class="col-md-6">
+				<div class="input-group mb-3">
+					<input type="text" id="filterName" name="filterName" class="form-control" placeholder="Search by Name" @bind="filterName">
+					<div class="input-group-append">
+						<button class="btn btn-outline-secondary" type="button" @onclick="filter">Search</button>
+					</div>
+					<div class="input-group-append">
+						<button class="btn btn-outline-secondary" type="button" @onclick="reset">Reset</button>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<select class="form-select" id="Category" name="Category" aria-label="Category" @onchange="categoryFilter">
+					<option value="Category">Category</option>
+					@{
+						if(categories != null)
+						{
+							foreach(var category in categories)
+							{
+									<option value="@(category.id)">@category.name</option>
+							}
+						}
+					}
+				</select>
+			</div>
+			<div class="col-md-3">
+				<select class="form-select" id="Price" name="Price" aria-label="Price" @onchange="priceFilter">
+					<option selected>Price</option>
+					<option value="1">Up to 1000$</option>
+					<option value="2">Up to 5000$</option>
+					<option value="3">Up to 10000$</option>
+				</select>
+			</div>
+		</div>
+	</div>
+	<div class=" mx-2">
+		
+		<div class="row">
+			@if (jewelries == null)
+			{
+
+				<div class="spinner"></div>
+			}
+			else
+			{
+				@foreach (var jewelry in jewelries)
+				{
+					
+					<div class="col-md-3 col-sm-6 mt-2 mb-1">
+						<div class="product-grid">
+							<div class="product-image">
+								<a class="image">
+									<img class="pic-1" src="/img/jewelryItems/@(jewelry.jewelryPicture)">
+									<img class="pic-2" src="/img/jewelryItems/@(jewelry.jewelryPicture)">
+								</a>
+								<ul class="product-links">
+									<li><a @onclick="()=>(quickAddToCart(jewelry))"><i class="fa fa-shopping-cart"></i></a></li>
+									<li><a id="@(string.Join("-", jewelry.name.Split(" ")))_@(jewelry.id)" @onclick="()=>(toggleSelect(jewelry))" class="like "><i class="fa fa-heart"></i></a></li>
+									<li><a  @onclick="()=>setSpecific(jewelry)"><i class="fa fa-search"></i></a></li>
+								</ul>
+							</div>
+							<div class="product-content">
+								<ul class="rating">
+									@{
+										Random random = new Random();
+										int randomNum = random.Next(3, 5);
+										for (int i = 1; i <= 5; i++)
+										{
+											<li class="@((i<=randomNum)?"fa":"far") fa-star"></li>
+										}
+									}
+								</ul>
+								<div class="d-flex justify-content-between" style="height: 39px;"><h3 class="title"><a href="detial/@(jewelry.id)">@(jewelry.name)</a></h3><span class="jewelry-category"><a href="shopping?cat=@((jewelry.category != null) ? jewelry.category.id : "All")">@((jewelry.category != null) ? jewelry.category.name : "")</a></span></div>
+								@if (jewelry.discount > 0)
+								{
+									<div class="d-flex justify-content-between">
+										<div class="price">$@(jewelry.sellingPrice - ((jewelry.sellingPrice) * ((decimal)jewelry.discount) / 100))</div>
+
+										<div class="before-discount">$@(jewelry.sellingPrice)</div>
+									</div>
+								}
+								else
+								{
+									<div class="price">$@(jewelry.sellingPrice)</div>
+								}
+
+							</div>
+						</div>
+					</div>
+				}
+
+				@if (SpecificJewelry != null)
+				{
+					<div class="modal show fade" id="productModal" tabindex="-1" role="dialog" style="display: block;">
+
+						<div class="modal-dialog" role="document" style="margin-top: 1%;">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" @onclick="closeModal"><span aria-hidden="true">×</span></button>
+								</div>
+								<div class="modal-body">
+									<div class="modal-product">
+										<div class="product-images">
+											<div class="main-image images">
+												<img alt="" src="/img/jewelryItems/@(SpecificJewelry.jewelryPicture)">
+											</div>
+										</div>
+										<div class="product-info">
+											<h1>@(SpecificJewelry.name)</h1>
+											<div class="price-box">
+												@if (SpecificJewelry.discount > 0)
+												{
+													<div class="d-flex justify-content-between">
+														<div class="price">$@(SpecificJewelry.sellingPrice - ((SpecificJewelry.sellingPrice) * ((decimal)SpecificJewelry.discount) / 100))</div>
+
+														<div class="before-discount">$@(SpecificJewelry.sellingPrice)</div>
+													</div>
+												}
+												else
+												{
+													<div class="price">$@(SpecificJewelry.sellingPrice)</div>
+												}
+											</div>
+											<a href="/detial/@(SpecificJewelry.id)" class="see-all">See all features</a>
+											<div class="quick-add-to-cart">
+												<div class="numbers-row">
+													<input type="number" id="count-cart-product" @bind="productCount">
+												</div>
+												<button class="single_add_to_cart_button" @onclick="()=>addToCart(SpecificJewelry)">Add to cart</button>
+												
+											</div>
+											<div class="quick-desc">
+												Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam fringilla augue nec est tristique auctor. Donec non est at libero vulputate rutrum. Morbi ornare lectus quis justo gravida semper. Nulla tellus mi, vulputate adipiscing cursus eu, suscipit id nulla.
+											</div>
+											<div class="social-sharing">
+												<div class="widget widget_socialsharing_widget">
+													<h3 class="widget-title-modal">Share this product</h3>
+													<ul class="social-icons">
+														<li><a target="_blank" title="Facebook" href="#" class="facebook social-icon"><i class="fa fa-facebook"></i></a></li>
+														<li><a target="_blank" title="Twitter" href="#" class="twitter social-icon"><i class="fa fa-twitter"></i></a></li>
+														<li><a target="_blank" title="Pinterest" href="#" class="pinterest social-icon"><i class="fa fa-pinterest"></i></a></li>
+														<li><a target="_blank" title="Google +" href="#" class="gplus social-icon"><i class="fa fa-google-plus"></i></a></li>
+														<li><a target="_blank" title="LinkedIn" href="#" class="linkedin social-icon"><i class="fa fa-linkedin"></i></a></li>
+													</ul>
+												</div>
+											</div>
+										</div><!-- .product-info -->
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				}
+			}
+
+		</div>
+	</div>
+
+<script>
+	//Know the width of the window
+	window.getViewportWidth = function () {
+		return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+	}
+	function showFavoriteDelayed(){
+		setTimeout(function () {
+			showFavorites();
+		}, 2000);		
+	}
+</script>
+</main>
+@code {
+	private string cat { get; set; } = "hwguq5";
+
+	//this is the main jewelry list 
+	private List<Models.JewelryItem>? jewelriesMain;
+	//this list is updated according to filters
+	private List<Models.JewelryItem>? jewelries;
+	private Models.JewelryItem SpecificJewelry = null;
+	private List<Models.Category>? categories;
+	//filter values
+	private string filterCategory = "";//previous price filter
+	private string filterPrice = "";//previous category filter
+	private string filterName = "";
+	//cart addition value
+	private int productCount = 3;
+
+	protected override async Task OnInitializedAsync()
+	{
+		var request = new HttpRequestMessage(HttpMethod.Get,
+		"https://localhost:7174/api/JewelryItem");//https://jewelryshopapi.bsite.net/api/JewelryItem
+
+		request.Headers.Add("Accept", "application/json; charset=utf-8");
+		request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
+		var client = ClientFactory.CreateClient();
+
+		var response = await client.SendAsync(request);
+
+		if (response.IsSuccessStatusCode)
+		{
+			using var responseStream = await response.Content.ReadAsStreamAsync();
+
+			jewelriesMain = await JsonSerializer.DeserializeAsync<List<Models.JewelryItem>>(responseStream);
+			jewelries = jewelriesMain;
+
+			cat = GetQueryStringValue("cat");
+			await parameterCategoryInitialize();
+		}
+		request = new HttpRequestMessage(HttpMethod.Get,
+		"https://localhost:7174/api/Category");//https://jewelryshopapi.bsite.net/api/Category
+
+		request.Headers.Add("Accept", "application/json; charset=utf-8");
+		request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
+		client = ClientFactory.CreateClient();
+
+		response = await client.SendAsync(request);
+
+		if (response.IsSuccessStatusCode)
+		{
+			using var responseStream = await response.Content.ReadAsStreamAsync();
+
+			categories = await JsonSerializer.DeserializeAsync<List<Models.Category>>(responseStream);
+
+		}
+	}
+	protected async Task setSpecific(Models.JewelryItem jewelry)
+	{
+		int windowWidth = await JSRuntime.InvokeAsync<int>("getViewportWidth");
+		Console.WriteLine("windowWidth : " + windowWidth);
+		if(windowWidth <= 770)
+		{
+			NavigationManager.NavigateTo("/detial/"+jewelry.id);
+		}
+		else
+		{
+			SpecificJewelry = jewelry;
+		}
+
+	}
+	protected void closeModal()
+	{
+		SpecificJewelry = null;
+	}
+
+	protected async Task addToCart(Models.JewelryItem jewelry)
+	{
+		closeModal();
+		if(productCount > 0)
+		{
+			if(productCount > jewelry.stockQuantity)
+			{
+				await JSRuntime.InvokeVoidAsync("showSnackbar","There is no enough quantity from this product<br/>Choose a number less than "+(jewelry.stockQuantity + 1),"danger");
+			}
+			else
+			{
+				//then add the product to the cart
+				await JSRuntime.InvokeVoidAsync("addItem", "{ \"id\" : " + jewelry.id + " , \"name\" : \"" + jewelry.name + "\", \"quantity\" : " + productCount + " , \"category\" : \"" + jewelry.category.name + "\" , \"price\" : " + (jewelry.sellingPrice - ((jewelry.sellingPrice) * ((decimal)jewelry.discount) / 100)) + " , \"picture\" : \"" + jewelry.jewelryPicture + "\"}");
+			}
+		}
+		else
+		{
+			await JSRuntime.InvokeVoidAsync("showSnackbar", "Enter a valid number for product quantity", "danger");
+		}
+	}
+	protected async Task quickAddToCart(Models.JewelryItem jewelry)
+	{
+		closeModal();
+
+		if (jewelry.stockQuantity <= 0)
+		{
+			await JSRuntime.InvokeVoidAsync("showSnackbar", "There is no enough quantity from this product<br/>Try later ", "danger");
+		}
+		else
+		{
+			//then add the product to the cart
+			await JSRuntime.InvokeVoidAsync("addItem", "{ \"id\" : " + jewelry.id + " , \"name\" : \"" + jewelry.name + "\", \"quantity\" : 1 , \"category\" : \"" + jewelry.category.name + "\" , \"price\" : " + (jewelry.sellingPrice - ((jewelry.sellingPrice) * ((decimal)jewelry.discount) / 100)) + " , \"picture\" : \"" + jewelry.jewelryPicture + "\"}");
+		}
+
+	}
+	private string GetQueryStringValue(string key)
+	{
+		var uri = new Uri(NavigationManager.Uri);
+		var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+		if (query.TryGetValue("cat", out var value))
+		{
+			return value;
+		}
+		return null;
+	}
+	protected async Task parameterCategoryInitialize()
+	{
+		if (!string.IsNullOrEmpty(cat))
+		{
+			// Perform your action when the "id" parameter becomes available
+			// For example, you can make an HTTP request, load data, or perform any other operation.
+		}
+		if(cat != null)
+		{
+			if (cat.Equals("All"))
+			{
+				filterCategory = "";
+				cat = "Category";
+			}
+			else
+			{
+				filterCategory = cat;
+			}
+			filterCat();			
+		}
+	}
+	protected async Task filter()
+	{
+		jewelries = jewelriesMain.Where(j => j.name.Contains(filterName, StringComparison.OrdinalIgnoreCase)).ToList();
+		filterPr();
+		filterCat();
+		//to refresh liked values upon refreshing
+		StateHasChanged();
+		JSRuntime.InvokeVoidAsync("showFavoriteDelayed");
+	}
+	protected void reset()
+	{
+		JSRuntime.InvokeVoidAsync("reset");
+		filterPrice = "";
+		filterCategory = "";
+		filterName = "";
+		filter();
+	}
+	protected async Task priceFilter(ChangeEventArgs e)
+	{
+		//take the value of the new filter
+		var filterNPrice = e.Value.ToString();
+		//check the filters
+		if (filterNPrice.Equals("Price"))
+		{
+			//here when removing the filter price
+			if (filterCategory.Equals(""))
+			{
+				//there is no filter so remove all price filters
+				jewelries = jewelriesMain;
+			}
+			else
+			{
+				jewelries = jewelriesMain;
+				//trigger the filter on the jewelries list according to categoryFilter
+				filterCat();
+			}
+			filterPrice = "";//to denote that there is no previous filtering
+		}
+		else if(filterPrice.Equals(""))//this means if there was no applied filter
+		{
+			//denote that we have a new filter active
+			filterPrice = filterNPrice;
+			if (filterCategory.Equals(""))//here there is no category filter so filter all list
+			{
+				jewelries = jewelriesMain;
+			}
+			filterPr();
+		}
+		else
+		{
+			//if there was an applied filter
+			//so we need to remove all the filters then initiate them agian
+			jewelries = jewelriesMain;
+			filterPrice = filterNPrice;
+			filterPr();
+			filterCat();
+		}
+		//filter according to name
+		filter();
+	}
+
+	protected async Task categoryFilter(ChangeEventArgs e)
+	{
+		var filterNCategory = e.Value.ToString();
+		if (filterNCategory.Equals("Category"))
+		{
+			//here when removing the filter category
+			if (filterPrice.Equals(""))
+			{
+				//there is no filter so remove all category filters
+				jewelries = jewelriesMain;
+			}
+			else
+			{
+				jewelries = jewelriesMain;
+				//trigger the filter on the jewelries list according to priceFilter
+				filterPr();
+			}
+			filterCategory = "";//to denote that there is no previous filtering
+		}else if(filterCategory.Equals(""))
+		{
+			//denote that we have a new filter active
+			filterCategory = filterNCategory;
+			if (filterPrice.Equals(""))//here there is no category filter so filter all list
+			{
+				jewelries = jewelriesMain;
+			}
+			filterCat();
+		}
+		else
+		{
+			//if there was an applied filter
+			//so we need to remove all the filters then initiate them agian
+			jewelries = jewelriesMain;
+			filterCategory = filterNCategory;
+			filterCat();
+			filterPr();
+		}
+		//filter according to name
+		filter();
+	}
+	protected async Task filterPr()
+	{
+		if (filterPrice.Equals(""))
+		{
+			//just to check we wont do any thing 
+		}
+		else
+		{
+			if (filterPrice.Equals("1"))
+			{
+				//here add this new filter to the previous
+				jewelries = jewelries.Where(x => ((x.sellingPrice - (x.sellingPrice * ((decimal)x.discount) / 100)) <= 1000)).ToList();
+
+			}
+			else if (filterPrice.Equals("2"))
+			{
+				//here add this new filter to the previous
+				jewelries = jewelries.Where(x => ((x.sellingPrice - (x.sellingPrice * ((decimal)x.discount) / 100)) <= 5000)).ToList();
+
+			}
+			else if (filterPrice.Equals("3"))
+			{
+				//here add this new filter to the previous
+				jewelries = jewelries.Where(x => ((x.sellingPrice - (x.sellingPrice * ((decimal)x.discount) / 100)) <= 10000)).ToList();
+			}
+		}
+	}
+	protected async Task filterCat()
+	{
+		if (filterCategory.Equals(""))
+		{
+			//just to check we wont do any thing
+		}
+		else
+		{
+			jewelries = jewelries.Where(x => x.category.id == int.Parse(filterCategory)).ToList();
+		}
+	}
+	protected async Task toggleSelect(Models.JewelryItem jewelry)
+	{
+		await JSRuntime.InvokeVoidAsync("checkAvailability", string.Join("-", jewelry.name.Split(" ")) + "_" + jewelry.id);
+
+	}
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			if (cat == "hwguq5")
+			{
+				cat = GetQueryStringValue("cat");
+				await parameterCategoryInitialize();
+			}
+			// JavaScript event listeners
+			await JSRuntime.InvokeVoidAsync("afterRendering");
+			//Thread.Sleep(2000);
+			StateHasChanged();
+			await JSRuntime.InvokeVoidAsync("showFavorites");
+			await JSRuntime.InvokeVoidAsync("setInitial",cat);
+		}
+	}
+}
+

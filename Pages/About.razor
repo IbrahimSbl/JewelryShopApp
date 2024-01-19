@@ -1,0 +1,125 @@
+﻿@page "/about"
+@inject IJSRuntime JSRuntime
+<main id="main">
+	<!-- ======= Breadcrumbs ======= -->
+	<section id="breadcrumbs" class="breadcrumbs">
+		<div class="container">
+
+			<div class="d-flex justify-content-between align-items-center">
+				<h2>About Us</h2>
+				<ol>
+					<li><a href="/">Home</a></li>
+					<li>About</li>
+				</ol>
+			</div>
+
+		</div>
+	</section><!-- End Breadcrumbs -->
+	<!-- ======= Testimonials Section ======= -->
+	<section id="aboutUs" class="aboutUs">
+		<div class="about-us" data-aos="fade-up" data-aos-delay="500">
+			<img src="img/about/slide-1.jpg" alt="" style="float:left;margin-right:20px;"/>
+			<h2>Our Story</h2>
+			<p>
+				At <i><b>UShine</b></i>, our story is one of unwavering passion, artisanal craftsmanship, and an unrelenting commitment to excellence. It all began with a vivid dream and a resolute desire to create a jewelry brand that transcends mere adornment. Founded by <i>Saul Goodman</i>, our journey is a living testament to our deep-seated love for the artistry, traditions, and innovation that define the world of fine jewelry.
+				</p>
+			 	With each piece we create, we weave a tapestry of stories and emotions, encapsulating moments in time. Our brand stands as a beacon of quality, ethics, and timeless elegance. We are more than a jewelry shop; we are curators of treasured moments and keepers of your personal legacies.@* The pieces we offer are not mere ornaments; they are expressions of love, moments of joy, and tokens of celebration. In every exquisite detail, we aim to capture the essence of beauty and individuality, embodying the spirit of craftsmanship.
+
+			</p> *@
+		</div>
+		<div class="about-us" data-aos="fade-up" data-aos-delay="500">
+			<img src="img/about/slide-2.jpg" alt="" style="float:right;margin-left:20px;" />
+			<h2>Our Creative Team</h2>
+			<p>
+				Behind the scenes at <i><b>UShine</b></i>, an ensemble of exceptional talents coalesce to bring your dreams to life. Guided by our visionary designer, <i>Sara Wilsson</i>, our creative team is the beating heart of our enterprise. With their collective expertise and a shared reverence for the art of jewelry design, they manifest the extraordinary. Each piece is a canvas on which they paint stories of love, heritage, and individuality.
+
+			</p>
+		</div>
+		<div class="about-us" data-aos="fade-up" data-aos-delay="500">
+			<img src="img/about/blog-3.jpg" alt="" style="float:left;margin-right:20px;" />
+			<h2>Customer-Centric Approach</h2>
+			<p>
+				At <i><b>UShine</b></i>, our patrons are the cornerstone of our existence. Led by the indomitable <i>Jena Karlis &amp; Emily Harison</i>, our team is defined by an unwavering dedication to ensuring your experience with us is nothing short of extraordinary. We are more than sales associates; we are your trusted advisors, confidants, and guides through the world of fine jewelry.
+
+				Our customer-centric approach encompasses the full spectrum of your journey with us, whether you are celebrating a milestone or simply seeking an exquisite indulgence. We understand that each visit to our store is a significant moment in your life, and we take pride in our ability to make those moments shine.s At <i><b>UShine</b></i>, your happiness is our ultimate measure of success.
+			</p>
+		</div>
+	</section>
+	<!-- ======= Our Brands Section ======= -->
+	<section id="clients" class="clients">
+		<div class="container">
+
+			<div class="section-title" data-aos="fade-up">
+				<h2>Our <strong>Brands</strong></h2>
+				<p>At <i><b>UShine</b></i>, we take pride in showcasing renowned brands that epitomize exceptional craftsmanship, offering a captivating array of designs for the discerning connoisseur.</p>
+			</div>
+
+			<div class="row no-gutters clients-wrap clearfix" data-aos="fade-up">
+
+				<div class="col-lg-3 col-md-4 col-xs-6">
+					<div class="client-logo">
+						<img src="img/clients/cartier.png" class="img-fluid" alt="">
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-4 col-xs-6">
+					<div class="client-logo">
+						<img src="img/clients/isharya.png" class="img-fluid" alt="">
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-4 col-xs-6">
+					<div class="client-logo">
+						<img src="img/clients/rolex.png" class="img-fluid" alt="">
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-4 col-xs-6">
+					<div class="client-logo">
+						<img src="img/clients/tiffany.png" class="img-fluid" alt="">
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-4 col-xs-6">
+					<div class="client-logo">
+						<img src="img/clients/tudor.png" class="img-fluid" alt="">
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-4 col-xs-6">
+					<div class="client-logo">
+						<img src="img/clients/zenith.png" class="img-fluid" alt="">
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-4 col-xs-6">
+					<div class="client-logo">
+						<img src="img/clients/buccellati.png" class="img-fluid" alt="">
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-4 col-xs-6">
+					<div class="client-logo">
+						<img src="img/clients/pandora.png" class="img-fluid" alt="">
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+	</section><!-- End Our Clients Section -->
+
+</main>
+
+@code {
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+
+		if (firstRender)
+		{
+			// Attach JavaScript event listeners here
+			await JSRuntime.InvokeVoidAsync("afterRendering");
+		}
+
+	}
+}

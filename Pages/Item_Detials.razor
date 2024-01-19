@@ -1,0 +1,135 @@
+﻿@page "/detial/{id}"
+@using System.Text.Json;
+@inject IJSRuntime JSRuntime
+@inject IHttpClientFactory ClientFactory
+
+<main id="main">
+
+    <!-- ======= Breadcrumbs ======= -->
+    <section id="breadcrumbs" class="breadcrumbs">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center">
+                <h2>Portfolio Details</h2>
+                <ol>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/shopping">Shopping</a></li>
+                    <li>Item Details</li>
+                </ol>
+            </div>
+
+        </div>
+    </section><!-- End Breadcrumbs -->
+    <!-- ======= Product Details Section ======= -->
+    <section id="product-details" class="product-details">
+        <div class="container">
+            @if(jewelry != null){
+                <div class="row gy-4">
+
+                    <div class="col-lg-8">
+                        <img class="product-img" src="img/jewelryItems/@(jewelry.jewelryPicture)" alt="@(jewelry.name)">
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="product-info">
+                            <h3>Product information</h3>
+                            <ul>
+                                <li><strong>Category</strong>: @jewelry.category.name</li>
+                                <li><strong>Price</strong>: 
+                                    @if (jewelry.discount > 0)
+                                    {
+                                        <span class="price">$@(jewelry.sellingPrice - ((jewelry.sellingPrice) * ((decimal)jewelry.discount) / 100))</span>
+                                        <span class="before-discount">$@(jewelry.sellingPrice)</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="price">$@jewelry.sellingPrice</span>
+                                    }
+                                </li>
+                                <li><strong>Stock Quantity</strong>: @jewelry.stockQuantity</li>
+                                <li><strong>Weight</strong>: @jewelry.weight</li>
+                                <li><strong>Metal</strong>: @jewelry.metal</li>
+                                <li><strong>GemStones</strong>: @jewelry.gemstones</li>
+                            </ul>
+@*                             <div style="display:flex; justify-content:center;">
+                                <a class="product-btn align-middle" href="">Add To Cart</a>
+                            </div> *@
+                            <div class="detials-add-to-cart">
+                                <div class="numbers-row">
+                                    <input type="number" id="count-cart-product" @bind="productCount">
+                                </div>
+                                <button class="detials_add_to_cart_button" @onclick="()=>addToCart()">Add to cart</button>
+
+                            </div>
+                        </div>
+                        <div class="social-sharing">
+                            <div class="widget widget_socialsharing_widget">
+                                <h3 class="widget-title-modal">Share this product</h3>
+                                <ul class="social-icons">
+                                    <li><a target="_blank" title="Facebook" href="#" class="facebook social-icon"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a target="_blank" title="Twitter" href="#" class="twitter social-icon"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a target="_blank" title="Pinterest" href="#" class="pinterest social-icon"><i class="fa fa-pinterest"></i></a></li>
+                                    <li><a target="_blank" title="Google +" href="#" class="gplus social-icon"><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a target="_blank" title="LinkedIn" href="#" class="linkedin social-icon"><i class="fa fa-linkedin"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            }
+        </div>
+    </section><!-- End Portfolio Details Section -->
+
+</main><!-- End #main -->
+@code {
+    [Parameter]
+    public string id { get; set; }
+    //cart addition value
+    private int productCount = 3;
+
+
+    private Models.JewelryItem? jewelry;
+    protected override async Task OnInitializedAsync()
+    {
+        var request = new HttpRequestMessage(
+        HttpMethod.Get, "https://localhost:7174/api/JewelryItem" + id);//https://jewelryshopapi.bsite.net/api/JewelryItem/
+        request.Headers.Add("Accept", "application/json; charset=utf-8");
+        request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
+        var client = ClientFactory.CreateClient();
+
+        var response = await client.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            using var responseStream = await response.Content.ReadAsStreamAsync();
+
+            jewelry = await JsonSerializer.DeserializeAsync<Models.JewelryItem>(responseStream);
+
+        }
+    }
+
+    protected async Task addToCart()
+    {
+        if (productCount > 0)
+        {
+            if (productCount > jewelry.stockQuantity)
+            {
+                await JSRuntime.InvokeVoidAsync("showSnackbar", "There is no enough quantity from this product<br/>Choose a number less than " + (jewelry.stockQuantity + 1), "danger");
+            }
+            else
+            {
+                //then add the product to the cart
+                Console.WriteLine("****************** Success *********************");
+                await JSRuntime.InvokeVoidAsync("addItem", "{ \"id\" : " + jewelry.id + " , \"name\" : \"" + jewelry.name + "\", \"quantity\" : " + productCount + " , \"category\" : \"" + jewelry.category.name + "\" , \"price\" : " + (jewelry.sellingPrice - ((jewelry.sellingPrice) * ((decimal)jewelry.discount) / 100)) + " , \"picture\" : \"" + jewelry.jewelryPicture + "\"}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("********************** case 2 ********************");
+            await JSRuntime.InvokeVoidAsync("showSnackbar", "Enter a valid number for product quantity", "danger");
+        }
+    }
+
+}

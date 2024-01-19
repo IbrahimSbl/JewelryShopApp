@@ -1,0 +1,98 @@
+﻿@using System.Text.Json;
+@inject IHttpClientFactory ClientFactory
+@inject NavigationManager NavigationManager
+<!-- ======= Footer ======= -->
+<footer id="footer">
+
+    <div class="footer-top">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-lg-3 col-md-6 footer-contact">
+                    <h3>UShine</h3>
+                    <p>
+                        A108 Adam Street <br>
+                        New York, NY 535022<br>
+                        United States <br><br>
+                        <strong>Phone:</strong> +961 76 099 325<br>
+                        <strong>Email:</strong> ibrahimsbl1234@gmail.com<br>
+                    </p>
+                </div>
+
+                <div class="col-lg-2 col-md-6 footer-links">
+                    <h4>Useful Links</h4>
+                    <ul>
+                        <li><i class="bx bx-chevron-right"></i> <a href="\" @onclick='() => NavigationManager.NavigateTo("/")'>Home</a></li>
+                        <li><i class="bx bx-chevron-right"></i> <a href="\about" @onclick='() => NavigationManager.NavigateTo("/about")'>About us</a></li>
+                        <li><i class="bx bx-chevron-right"></i> <a href="\testimonials" @onclick='() => NavigationManager.NavigateTo("/testimonials")'>Testimonials</a></li>
+                        <li><i class="bx bx-chevron-right"></i> <a href="\contact" @onclick='() => NavigationManager.NavigateTo("/contact")'>Contact us</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6 footer-links">
+                    <h4>Our Products</h4>
+                    <ul>
+                        @if(categories.Count > 0)
+                        {
+                            @foreach(var category in categories)
+                            {
+                                <li><i class="bx bx-chevron-right"></i> <a href="\shopping?cat=@(category.id)" @onclick='() => NavigationManager.NavigateTo("/shopping?cat="+category.id)'>@category.name</a></li>
+                            }
+                        }
+                    </ul>
+                </div>
+
+                <div class="col-lg-4 col-md-6 footer-newsletter">
+                    <h4>Join Our Newsletter</h4>
+                    <p>Stay updated on the latest trends and exclusive offers with us.</p>
+                    <form action="" method="post">
+                        <input type="email" id="email" name="email" autocomplete="on"><input type="submit" id="subscribe" name="subscribe" value="Subscribe">
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="container d-md-flex py-4">
+
+        <div class="me-md-auto text-center text-md-start">
+            <div class="copyright">
+                &copy; Copyright <strong><span>UShine</span></strong>. All Rights Reserved
+            </div>
+            <div class="credits">
+                Designed by <a href="#">Ibrahim AL Siblani</a>
+            </div>
+        </div>
+        <div class="social-links text-center text-md-right pt-3 pt-md-0">
+            <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
+            <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
+            <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
+            <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
+            <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+        </div>
+    </div>
+</footer><!-- End Footer -->
+@code {
+    private List<Models.Category> categories = new List<Models.Category>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get,
+            "https://localhost:7174/api/Category");//https://jewelryshopapi.bsite.net/api/Category
+
+        request.Headers.Add("Accept", "application/json; charset=utf-8");
+        request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
+        var client = ClientFactory.CreateClient();
+
+        var response = await client.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            using var responseStream = await response.Content.ReadAsStreamAsync();
+
+            categories = await JsonSerializer.DeserializeAsync<List<Models.Category>>(responseStream);
+
+        }
+    }
+}

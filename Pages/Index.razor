@@ -1,0 +1,297 @@
+﻿@page "/"
+@using JewelryShopApp.Models
+@using System.Text.Json;
+@inject IHttpClientFactory ClientFactory
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
+<!-- ======= Hero Section ======= -->
+<section id="hero">
+	<div id="heroCarousel" class="carousel slide carousel-fade" data-bs-interval="3000" data-bs-ride="carousel">
+		<div class="carousel-inner">
+			<div class="carousel-indicators">
+				<button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+				<button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+				<button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+			</div>
+			<!-- Slide 1 -->
+			<div class="carousel-item active" style="background-image: url(img/slide/CarouselImage1.jpg);" >
+				<div class="carousel-container">
+					<div class="carousel-content animate__animated animate__fadeInUp">
+						<h2>Welcome to <span>UShine</span></h2>
+						<p>Jewelry is a luxury that everyone deserves. <br /> BE <br />SHINY WITH US</p>
+						<div class="text-center"><a href="/shopping?cat=All" class="btn-get-started" @onclick='() => NavigationManager.NavigateTo("/shopping?cat=All")'>Shop now</a></div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Slide 2 -->
+			<div class="carousel-item" style="background-image: url(img/slide/CarouselImage2.jpg);">
+				<div class="carousel-container">
+					<div class="carousel-content animate__animated animate__fadeInUp">
+						<h2>Diamonds are a girl's best friend.</h2>
+						<p>Jewelry is a timeless treasure that can be passed down from generation to generation.</p>
+						<div class="text-center"><a href="/shopping?cat=All" class="btn-get-started" @onclick='() => NavigationManager.NavigateTo("/shopping?cat=All")'>Shop now</a></div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Slide 3 -->
+			<div class="carousel-item" style="background-image: url(img/slide/slide-3.jpg);">
+				<div class="carousel-container">
+					<div class="carousel-content animate__animated animate__fadeInUp">
+						<h2>Adornments that adorn your soul.</h2>
+						<p>Jewelry is more than just a fashion accessory. It is something that can adorn our souls and make us feel more beautiful and confident.</p>
+						<div class="text-center"><a href="/shopping?cat=All" class="btn-get-started" @onclick='() => NavigationManager.NavigateTo("/shopping?cat=All")'>Shop now</a></div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<a class="carousel-control-prev" href="#heroCarousel" role="button" data-bs-slide="prev">
+			<span class="carousel-control-prev-icon bx bx-left-arrow" aria-hidden="true"></span>
+			<span class="visually-hidden">Previous</span>
+		</a>
+
+		<a class="carousel-control-next" href="#heroCarousel" role="button" data-bs-slide="next">
+			<span class="carousel-control-next-icon bx bx-right-arrow" aria-hidden="true"></span>
+			<span class="visually-hidden">Next</span>
+		</a>
+
+	</div>
+</section><!-- End Hero -->
+
+<main id="main">
+
+	<!-- ======= Cta Section ======= -->
+	<section id="cta" class="cta">
+		<div class="container">
+
+			<div class="row">
+				<div class="col-lg-9 text-center text-lg-left">
+					<h3>We offer you more than <span>2000 item</span> in this website!</h3>
+					<p>
+						Our jewelry shop offers a wide variety of jewelry items to suit every taste and budget. From classic and traditional pieces to modern and trendy designs, we have something for everyone.
+					</p>
+				</div>
+				<div class="col-lg-3 cta-btn-container text-center">
+					<a class="cta-btn align-middle" href="/shopping?cat=All" @onclick='() => NavigationManager.NavigateTo("/shopping?cat=All")'>Start Discovering</a>
+				</div>
+			</div>
+
+		</div>
+	</section><!-- End Cta Section -->
+	<!-- ======= Services Section ======= -->
+	<section id="services" class="services">
+		<div class="container">
+
+			<div class="row">
+				<div class="col-lg-4 col-md-6">
+					<div class="icon-box" data-aos="fade-up">
+						<div class="icon"><i class="bi bi-briefcase"></i></div>
+						<h4 class="title"><a href="">Wide variety of jewelry items</a></h4>
+						<p class="description">We offer a variety of styles, materials, and price points to meet the needs of all customers</p>
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-6">
+					<div class="icon-box" data-aos="fade-up" data-aos-delay="100">
+						<div class="icon"><i class="bi bi-card-checklist"></i></div>
+						<h4 class="title"><a href="">High-quality images and videos</a></h4>
+						<p class="description">Jewelry is a visual product, so it is important to have high-quality images and videos of the products</p>
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-6">
+					<div class="icon-box" data-aos="fade-up" data-aos-delay="200">
+						<div class="icon"><i class="bi bi-bar-chart"></i></div>
+						<h4 class="title"><a href="">Detailed product descriptions</a></h4>
+						<p class="description">information about the materials, dimensions, and weight of the jewelry, as well as any other relevant details.</p>
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-6">
+					<div class="icon-box" data-aos="fade-up" data-aos-delay="200">
+						<div class="icon"><i class="bi bi-binoculars"></i></div>
+						<h4 class="title"><a href="">Secure payment processing</a></h4>
+						<p class="description">Jewelry is a valuable product, so it is important to offer secure payment processing.</p>
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-6">
+					<div class="icon-box" data-aos="fade-up" data-aos-delay="300">
+						<div class="icon"><i class="bi bi-brightness-high"></i></div>
+						<h4 class="title"><a href="">Easy returns and exchanges</a></h4>
+						<p class="description">Customers can return or exchange their purchase if they are not satisfied.</p>
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-6">
+					<div class="icon-box" data-aos="fade-up" data-aos-delay="400">
+						<div class="icon"><i class="bi bi-calendar4-week"></i></div>
+						<h4 class="title"><a href="">Excellent customer service</a></h4>
+						<p class="description">We are responsive to customer inquiries and resolving any issues that may arise promptly and courteously</p>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</section><!-- End Services Section -->
+	<!-- ======= Portfolio Section ======= -->
+	<section id="portfolio" class="portfolio">
+		<div class="container">
+
+			<div class="row" data-aos="fade-up">
+				<div class="col-lg-12 d-flex justify-content-center">
+					<ul id="portfolio-flters">
+						<li data-filter="*" class="filter-trigger filter-active">All</li>
+						@if (categories.Count >= 0)
+						{
+							@foreach (var category in categories)
+							{
+								<li class="filter-trigger" data-filter=".filter-@(category.name.ToLower())">@category.name</li>
+							}
+
+						}
+					</ul>
+				</div>
+			</div>
+
+			<div class="row portfolio-container" data-aos="fade-up">
+
+				@((MarkupString)portfolioItems) 
+			</div>
+			
+		</div>
+	</section><!-- End Portfolio Section -->
+	<!-- ======= Our Brands Section ======= -->
+	<section id="clients" class="clients">
+		<div class="container">
+
+			<div class="section-title" data-aos="fade-up">
+				<h2>Our <strong>Brands</strong></h2>
+				<p>At <i><b>UShine</b></i>, we take pride in showcasing renowned brands that epitomize exceptional craftsmanship, offering a captivating array of designs for the discerning connoisseur.</p>
+			</div>
+
+			<div class="row no-gutters clients-wrap clearfix" data-aos="fade-up">
+
+				<div class="col-lg-3 col-md-4 col-xs-6">
+					<div class="client-logo">
+						<img src="img/clients/cartier.png" class="img-fluid" alt="">
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-4 col-xs-6">
+					<div class="client-logo">
+						<img src="img/clients/isharya.png" class="img-fluid" alt="">
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-4 col-xs-6">
+					<div class="client-logo">
+						<img src="img/clients/rolex.png" class="img-fluid" alt="">
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-4 col-xs-6">
+					<div class="client-logo">
+						<img src="img/clients/tiffany.png" class="img-fluid" alt="">
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-4 col-xs-6">
+					<div class="client-logo">
+						<img src="img/clients/tudor.png" class="img-fluid" alt="">
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-4 col-xs-6">
+					<div class="client-logo">
+						<img src="img/clients/zenith.png" class="img-fluid" alt="">
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-4 col-xs-6">
+					<div class="client-logo">
+						<img src="img/clients/buccellati.png" class="img-fluid" alt="">
+					</div>
+				</div>
+
+				<div class="col-lg-3 col-md-4 col-xs-6">
+					<div class="client-logo">
+						<img src="img/clients/pandora.png" class="img-fluid" alt="">
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+	</section><!-- End Our Clients Section -->
+
+</main><!-- End #main -->
+@code {
+
+	private List<Models.Category> categories = new List<Models.Category>();
+	private List<Models.JewelryItem> jewelries = new List<Models.JewelryItem>();
+
+	private string portfolioItems = "<p>Empty</p>";
+	private bool hasRendered = false;
+	protected override async Task OnInitializedAsync()
+	{
+		//load all the categories
+		var request = new HttpRequestMessage(HttpMethod.Get,
+			"https://localhost:7174/api/Category");//https://jewelryshopapi.bsite.net/api/Category
+
+		request.Headers.Add("Accept", "application/json; charset=utf-8");
+		request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
+		var client = ClientFactory.CreateClient();
+
+		var response = await client.SendAsync(request);
+
+		if (response.IsSuccessStatusCode)
+		{
+			using var responseStream = await response.Content.ReadAsStreamAsync();
+
+			categories = await JsonSerializer.DeserializeAsync<List<Models.Category>>(responseStream);
+
+		}
+		//load all the jewelryitems with discount
+		request = new HttpRequestMessage(HttpMethod.Get,
+			"https://localhost:7174/api/JewelryItem/JewelryItemsWithDiscount");//https://jewelryshopapi.bsite.net/api/JewelryItem/JewelryItemsWithDiscount
+
+		request.Headers.Add("Accept", "application/json; charset=utf-8");
+		request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
+		client = ClientFactory.CreateClient();
+
+		response = await client.SendAsync(request);
+
+		if (response.IsSuccessStatusCode)
+		{
+			using var responseStream = await response.Content.ReadAsStreamAsync();
+
+			jewelries = await JsonSerializer.DeserializeAsync<List<Models.JewelryItem>>(responseStream);
+
+			Console.WriteLine("level 11 hasRendered = "+hasRendered);
+
+		}
+	}
+	protected async Task loopOverPortfolioItems()
+	{
+		// Delay for a moment to ensure the loop has completed
+		await Task.Delay(1000);
+		if (jewelries.Count > 0)
+		{
+			portfolioItems = "";
+			for (var i = 0; i < jewelries.Count; i++)
+			{
+				portfolioItems += "<div class=\"col-lg-4 col-md-6 portfolio-item filter-" + (jewelries[i].category.name.ToLower()) + "\"><img src=\"img/jewelryItems/" + (jewelries[i].jewelryPicture) + "\" class=\"img-fluid\" alt=\"\"><span class=\"product-sale-label\">sale!</span><span class=\"sale-tag\"></span><div class=\"portfolio-info\"><h4>" + jewelries[i].name + "</h4><p>" + jewelries[i].category.name + "</p><a href=\"img/jewelryItems/" + (jewelries[i].jewelryPicture) + "\" data-gallery=\"portfolioGallery\" class=\"portfolio-lightbox preview-link\" title=\"" + (jewelries[i].name) + "\"><i class=\"bx bx-plus\"></i></a><a href=\"detial\\"+(jewelries[i].id)+"\" class=\"details-link\" title=\"More Details\"><i class=\"bx bx-link\"></i></a></div></div>";
+			}
+		}
+	}
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender )
+		{
+			await loopOverPortfolioItems();
+			StateHasChanged();
+			await Task.Delay(1000);
+			await JSRuntime.InvokeVoidAsync("afterRendering");
+		}
+	}
+}
