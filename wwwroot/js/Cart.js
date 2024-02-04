@@ -4,7 +4,7 @@
 
 function getCart() {
     var CART = localStorage.getItem("cart-JSGE472HDTA82H");
-    if (CART === null) {
+    if (CART === "null") {
         localStorage.setItem("cart-JSGE472HDTA82H", JSON.stringify([]));
         return [];
     }

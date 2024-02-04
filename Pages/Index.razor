@@ -236,7 +236,7 @@
 	{
 		//load all the categories
 		var request = new HttpRequestMessage(HttpMethod.Get,
-			"https://localhost:7174/api/Category");//https://jewelryshopapi.bsite.net/api/Category
+			"http://jewelryshopapi.somee.com/api/Category");
 
 		request.Headers.Add("Accept", "application/json; charset=utf-8");
 		request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
@@ -253,7 +253,7 @@
 		}
 		//load all the jewelryitems with discount
 		request = new HttpRequestMessage(HttpMethod.Get,
-			"https://localhost:7174/api/JewelryItem/JewelryItemsWithDiscount");//https://jewelryshopapi.bsite.net/api/JewelryItem/JewelryItemsWithDiscount
+			"http://jewelryshopapi.somee.com/api/JewelryItem/JewelryItemsWithDiscount");
 
 		request.Headers.Add("Accept", "application/json; charset=utf-8");
 		request.Headers.Add("User-Agent", "HttpClientFactory-Sample");

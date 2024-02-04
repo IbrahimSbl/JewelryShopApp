@@ -64,7 +64,7 @@
 	protected override async Task OnInitializedAsync()
 	{
 		var request = new HttpRequestMessage(HttpMethod.Get,
-			"https://localhost:7174/api/Category");//https://jewelryshopapi.bsite.net/api/Category
+			"http://jewelryshopapi.somee.com/api/Category");//https://jewelryshopapi.bsite.net/api/Category
 
 		request.Headers.Add("Accept", "application/json; charset=utf-8");
 		request.Headers.Add("User-Agent", "HttpClientFactory-Sample");

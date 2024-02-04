@@ -51,9 +51,6 @@
                                 <li><strong>Metal</strong>: @jewelry.metal</li>
                                 <li><strong>GemStones</strong>: @jewelry.gemstones</li>
                             </ul>
-@*                             <div style="display:flex; justify-content:center;">
-                                <a class="product-btn align-middle" href="">Add To Cart</a>
-                            </div> *@
                             <div class="detials-add-to-cart">
                                 <div class="numbers-row">
                                     <input type="number" id="count-cart-product" @bind="productCount">
@@ -94,7 +91,7 @@
     protected override async Task OnInitializedAsync()
     {
         var request = new HttpRequestMessage(
-        HttpMethod.Get, "https://localhost:7174/api/JewelryItem" + id);//https://jewelryshopapi.bsite.net/api/JewelryItem/
+        HttpMethod.Get, "http://jewelryshopapi.somee.com/api/JewelryItem/" + id);
         request.Headers.Add("Accept", "application/json; charset=utf-8");
         request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
         var client = ClientFactory.CreateClient();
@@ -106,7 +103,7 @@
             using var responseStream = await response.Content.ReadAsStreamAsync();
 
             jewelry = await JsonSerializer.DeserializeAsync<Models.JewelryItem>(responseStream);
-
+            Console.WriteLine(jewelry);
         }
     }
 
